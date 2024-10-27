@@ -1,8 +1,8 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+    Tristian Jurgens
+    10/27/2024
+    Creating a game of Breakout
  */
-
 
 public class Breakout 
 {

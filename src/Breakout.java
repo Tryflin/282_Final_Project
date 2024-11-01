@@ -15,7 +15,6 @@ public class Breakout extends JFrame
     private int win_wid = 650;
     private int win_hei = 240;
     
-    ArrayList<String> text = new ArrayList<>();
     
     public Breakout() 
     {

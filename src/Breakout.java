@@ -66,7 +66,7 @@ public class Breakout extends JFrame
         }
     }
     
-    //Does the painting, which starts the music
+    //Does the painting, which starts the music, also initizlize everything
     public Breakout() 
     {
         this.setTitle("Breakout");
@@ -89,6 +89,7 @@ public class Breakout extends JFrame
     private void initializeGame() 
     {
         Blocks();
+        Words();
         gameOver = false;
         ballMoving = false;
     }
@@ -137,16 +138,34 @@ public class Breakout extends JFrame
         
         JPanel northPan = new JPanel();         
         northPan.add(lab);
-        timerLabel = new JLabel("Time: 3:00"); 
-        northPan.add(timerLabel); 
-        scoreLabel = new JLabel("Score: 0"); 
-        northPan.add(scoreLabel);
+        //timerLabel = new JLabel("Time: 3:00"); 
+        //northPan.add(timerLabel); 
+        //scoreLabel = new JLabel("Score: 0"); 
+        //northPan.add(scoreLabel);
         this.add(northPan, BorderLayout.NORTH);
     }
     
     class Ball
     {
-        
+        private int x, y, diameter;
+        private Color color;
+        private int dx, dy;
+
+        public Ball(int x, int y, int diameter, Color color) 
+        {
+            this.x = x;
+            this.y = y;
+            this.diameter = diameter;
+            this.color = color;
+            this.dx = 3; 
+            this.dy = -3;
+        }
+
+        public void draw(Graphics g) 
+        {
+            g.setColor(color);
+            g.fillOval(x, y, diameter, diameter);
+        }
     }
     
     class Paddle

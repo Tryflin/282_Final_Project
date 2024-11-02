@@ -1,10 +1,10 @@
 /*
     Tristian Jurgens
     10/27/2024
-    Creating a game of Breakout
+    Program is designed to simuate a game of Breakout
  */
 
-
+//all the import statements
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Random;
 import javax.sound.sampled.*;
 
-public class Breakout extends JFrame implements KeyListener
-{
+//Pretty much does everything
+public class Breakout extends JFrame implements KeyListener 
+{    
+    //So many Fields
     private boolean gameWon = false;
     private boolean gameOver; 
     private boolean ballMoving;
@@ -35,17 +37,7 @@ public class Breakout extends JFrame implements KeyListener
     private Timer countdownTimer;
     private MusicPlayer musicPlayer;
 
-    @Override
-    public void keyReleased(KeyEvent e) 
-    {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) 
-        {
-            paddle.stop();
-        }
-    }
-
-    
-    //Learned from https://www.youtube.com/watch?v=kc3McnaAU8s
+    // Plays music, learned from https://www.youtube.com/watch?v=kc3McnaAU8s
     public class MusicPlayer 
     {
         private Clip clip;
@@ -55,7 +47,7 @@ public class Breakout extends JFrame implements KeyListener
             try 
             {
                 AudioInputStream audioInputStream = 
-                AudioSystem.getAudioInputStream(new File(filepath));
+                    AudioSystem.getAudioInputStream(new File(filepath));
                 clip = AudioSystem.getClip();
                 clip.open(audioInputStream);
                 clip.loop(Clip.LOOP_CONTINUOUSLY); 
@@ -75,25 +67,27 @@ public class Breakout extends JFrame implements KeyListener
             }
         }
     }
-    
-    //Does the painting, which starts the music, also initizlize everything
+
+    // Constructor
     public Breakout() 
     {
         this.setTitle("Breakout");
-        this.setSize(win_wid, win_hei);
+        this.setSize(win_wid + 15, win_hei);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.addKeyListener(this);
-
 
         blocks = new ArrayList<>();
         blockColors = new ArrayList<>();
         random = new Random();
-        
+
+        initializeGame();
+        this.setVisible(true);
+
         musicPlayer = new MusicPlayer();
         musicPlayer.play("Breakout.wav");
 
-        initializeGame();
-                Timer timer = new Timer(20, e -> 
+        //This is the checker for updates, A.K.A it checks every couple millaseconds
+        Timer timer = new Timer(20, e -> 
         {
             if (!gameOver) 
             {
@@ -107,20 +101,37 @@ public class Breakout extends JFrame implements KeyListener
             }
         });
         timer.start();
-        
-        this.setVisible(true);                
     }
-    
-    // Initialize the game for start
+
+    // Initialize game elements
     private void initializeGame() 
     {
-        Blocks();
         Words();
+        Blocks();
         paddle = new Paddle(300, 400, 85, 15, Color.GRAY);
         ball = new Ball(335, 380, 15, Color.WHITE);
         gameOver = false;
         ballMoving = false;
     }
+
+    // Set up the display words and labels
+    private void Words() 
+    {
+        int font_Size = 16;
+        Font bigFont = new Font("Arial", Font.BOLD, font_Size);
+        JLabel lab = new JLabel("Breakout");
+        lab.setFont(bigFont);
+        
+        JPanel northPan = new JPanel();         
+        northPan.add(lab);
+        timerLabel = new JLabel("Time: 3:00"); 
+        northPan.add(timerLabel); 
+        scoreLabel = new JLabel("Score: 0"); 
+        northPan.add(scoreLabel);
+        this.add(northPan, BorderLayout.NORTH);
+    }
+
+    // Start the countdown timer that appears on the top
     private void startCountdown() 
     {
         countdownTimer = new Timer(1000, e -> 
@@ -149,9 +160,9 @@ public class Breakout extends JFrame implements KeyListener
         });
         countdownTimer.start();
     }
-    
-    //sends the dimensions to createblock
-    private void Blocks()
+
+    // Create blocks for the game
+    private void Blocks() 
     {
         for (int i = 0; i < 12; i++) 
         {
@@ -159,12 +170,12 @@ public class Breakout extends JFrame implements KeyListener
             CreateBlock(i * 55 + 5, 75, 50, 20, false);
             CreateBlock(i * 55 + 5, 100, 50, 20, false); 
         }
-        
+
         BlockPanel blockPanel = new BlockPanel();
         this.add(blockPanel, BorderLayout.CENTER);
     }
-    
-    //actually making the blocks
+
+    // Create an individual block
     private void CreateBlock(int x, int y, int width, int height, boolean randomColor) 
     {
         blocks.add(new Rectangle(x, y, width, height));
@@ -185,14 +196,16 @@ public class Breakout extends JFrame implements KeyListener
         int g = random.nextInt(256);
         int b = random.nextInt(256);
         return new Color(r, g, b); 
-    }  
-    
+    }
+
     // KeyListener methods learned from: https://docs.oracle.com/javase/tutorial/uiswing/events/keylistener.html
+    @Override
     public void keyTyped(KeyEvent e) 
     {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public void keyPressed(KeyEvent e) 
     {
         if (!countdownStarted) 
@@ -229,26 +242,101 @@ public class Breakout extends JFrame implements KeyListener
             ballMoving = true;
         }
     }
-    
-    //paint the top, using what was taught in Pset5
-    private void Words()
+
+    @Override
+    public void keyReleased(KeyEvent e) 
     {
-        int font_Size = 16;
-        Font bigFont = new Font("Arial", Font.BOLD, font_Size);
-        JLabel lab = new JLabel("Breakout");
-        lab.setFont(bigFont);
-        
-        JPanel northPan = new JPanel();         
-        northPan.add(lab);
-        timerLabel = new JLabel("Time: 3:00"); 
-        northPan.add(timerLabel); 
-        scoreLabel = new JLabel("Score: 0"); 
-        northPan.add(scoreLabel);
-        this.add(northPan, BorderLayout.NORTH);
+        paddle.stop(); 
     }
-    
-    //creates a white ball that updates.
-    class Ball
+
+    // Show dialog for game over or win
+    private void showTryAgainDialog() 
+    {
+        int response = JOptionPane.showOptionDialog(this, gameWon ? 
+            "You Win! Try Again?" : "Game Over! Try Again?",
+            "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+            null, new String[]{"Yes", "No"}, "Yes");
+
+        if (response == JOptionPane.YES_OPTION) 
+        {
+            restartGame();
+        } 
+        else 
+        {
+            System.exit(0); 
+        }
+    }
+
+    // Restart the game, paddle is not done correctly
+    private void restartGame() 
+    {
+        gameOver = false;
+        gameWon = false;
+        timeRemaining = 180;
+        score = 0;
+        scoreLabel.setText("Score: 0");
+        timerLabel.setText("Time: 3:00");
+        countdownStarted = false; 
+
+        blocks.clear();
+        blockColors.clear();
+        Blocks(); 
+        ball.x = 335;
+        ball.y = 380;
+        setRandomBallDirection();
+        paddle.x = (win_wid - paddle.width) / 2;
+        ballMoving = false;
+        paddle.stop(); 
+        
+        musicPlayer.play("Breakout.wav");
+
+        repaint();
+    }
+
+    // paints, or adds to the screen
+    private class BlockPanel extends JPanel 
+    {
+        @Override
+        protected void paintComponent(Graphics g) 
+        {
+            super.paintComponent(g);
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
+            for (int i = 0; i < blocks.size(); i++) 
+            {
+                Rectangle block = blocks.get(i);
+                g.setColor(blockColors.get(i));
+                g.fillRect(block.x, block.y, block.width, block.height);
+            }
+            paddle.draw(g);
+            ball.draw(g);
+
+            if (gameOver) 
+            {
+                g.setColor(Color.WHITE);
+                g.setFont(new Font("Arial", Font.BOLD, 20));
+                if (gameWon) 
+                {
+                    g.drawString("You Win!", win_wid / 2 - 70, win_hei / 2);
+                } 
+                else 
+                {
+                    g.drawString("Game Over", win_wid / 2 - 70, win_hei / 2);
+                }
+                g.drawString("Score: " + score, win_wid / 2 - 70, win_hei / 2 + 30);
+                
+                int minutes = timeRemaining / 60;
+                int seconds = timeRemaining % 60;
+                g.drawString(String.format("Time: %d:%02d", minutes, seconds),
+                    win_wid / 2 - 70, win_hei / 2 + 60);
+
+                showTryAgainDialog(); 
+            }
+        }
+    }
+
+    // Makes the white ball
+    class Ball 
     {
         private int x, y, diameter;
         private Color color;
@@ -269,6 +357,7 @@ public class Breakout extends JFrame implements KeyListener
             g.setColor(color);
             g.fillOval(x, y, diameter, diameter);
         }
+
         public void update() 
         {
             x += dx;
@@ -295,9 +384,9 @@ public class Breakout extends JFrame implements KeyListener
             this.dx = dx; 
         }
     }
-    
-    //The paddle to hit the ball, with an updater
-    class Paddle
+
+    // Paddle with movement options
+    class Paddle 
     {
         private int x, y, width, height;
         private Color color;
@@ -312,7 +401,7 @@ public class Breakout extends JFrame implements KeyListener
             this.color = color;
             this.dx = 0;
         }
-        
+
         public void moveLeft() { dx = -10; }
         public void moveRight() { dx = 10; }
         public void stop() { dx = 0; }
@@ -322,67 +411,15 @@ public class Breakout extends JFrame implements KeyListener
             g.setColor(color);
             g.fillRect(x, y, width, height);
         }
+
         public void update() 
         {
             x += dx;
             if (x < 0) x = 0;
             if (x + width > win_wid) x = win_wid - width; 
-        }  
-    }
-    
-    //this is what sets the x and y stuff
-    private class BlockPanel extends JPanel 
-    {
-        @Override
-        protected void paintComponent(Graphics g) 
-        {
-            super.paintComponent(g);
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, getWidth(), getHeight());
-            for (int i = 0; i < blocks.size(); i++) 
-            {
-                Rectangle block = blocks.get(i);
-                g.setColor(blockColors.get(i));
-                g.fillRect(block.x, block.y, block.width, block.height);
-            }
-            paddle.draw(g);
-            ball.draw(g); 
-        }
-    }
-    
-    //sets on the awt screen
-    public void draw(Graphics g)      
-    {
-        g.setColor(color);
-        g.fillOval(x, y, diameter, diameter);
+        }        
     }
 
-    //refresh screen NOT WORKING
-    public void update() 
-    {
-        x += dx;
-        y += dy;
-
-        if (x < 0 || x + diameter > win_wid) 
-        {
-            dx = -dx;
-        }
-        if (y < 0) 
-        {
-            dy = -dy;
-        }
-        if (y + diameter > bottom) 
-        {
-            gameOver = true; 
-            musicPlayer.stop();
-            countdownTimer.stop(); 
-        }
-    }
-
-    public void setDx(int dx) 
-    {
-        this.dx = dx; 
-    }
     // Check for collisions
     private void checkCollisions() 
     {
@@ -428,6 +465,7 @@ public class Breakout extends JFrame implements KeyListener
             countdownTimer.stop();
         }
     }
+
     // Set a random direction for the ball
     private void setRandomBallDirection() 
     {
@@ -438,9 +476,10 @@ public class Breakout extends JFrame implements KeyListener
         }
         ball.dy =  6; 
     }
+
+    // Main method to start the game
     public static void main(String[] args) 
     {
         Breakout test = new Breakout();
     }
 }
-

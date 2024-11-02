@@ -74,6 +74,7 @@ public class Breakout extends JFrame
     
     
     
+    
     class Ball
     {
         

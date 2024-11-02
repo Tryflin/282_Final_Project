@@ -92,6 +92,8 @@ public class Breakout extends JFrame
         gameOver = false;
         ballMoving = false;
     }
+    
+    //sends the dimensions to createblock
     private void Blocks()
     {
         for (int i = 0; i < 12; i++) 
@@ -101,6 +103,8 @@ public class Breakout extends JFrame
             CreateBlock(i * 55 + 5, 100, 50, 20, false); 
         }
     }
+    
+    //actually making the blocks
     private void CreateBlock(int x, int y, int width, int height, boolean randomColor) 
     {
         blocks.add(new Rectangle(x, y, width, height));
@@ -121,15 +125,24 @@ public class Breakout extends JFrame
         int g = random.nextInt(256);
         int b = random.nextInt(256);
         return new Color(r, g, b); 
-    }
+    }   
     
-    private void initializeGame()
+    //paint the top, using what was taught in Pset5
+    private void Words()
     {
-        Blocks();
+        int font_Size = 16;
+        Font bigFont = new Font("Arial", Font.BOLD, font_Size);
+        JLabel lab = new JLabel("Breakout");
+        lab.setFont(bigFont);
+        
+        JPanel northPan = new JPanel();         
+        northPan.add(lab);
+        timerLabel = new JLabel("Time: 3:00"); 
+        northPan.add(timerLabel); 
+        scoreLabel = new JLabel("Score: 0"); 
+        northPan.add(scoreLabel);
+        this.add(northPan, BorderLayout.NORTH);
     }
-    
-    
-    
     
     class Ball
     {

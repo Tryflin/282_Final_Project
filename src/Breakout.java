@@ -66,10 +66,43 @@ public class Breakout extends JFrame
         random = new Random();
         
         this.setVisible(true);
+        
+        initializeGame();
     }
     private void Blocks()
     {
-        
+        for (int i = 0; i < 12; i++) 
+        {
+            CreateBlock(i * 55 + 5, 50, 50, 20, false);  
+            CreateBlock(i * 55 + 5, 75, 50, 20, false);
+            CreateBlock(i * 55 + 5, 100, 50, 20, false); 
+        }
+    }
+    private void CreateBlock(int x, int y, int width, int height, boolean randomColor) 
+    {
+        blocks.add(new Rectangle(x, y, width, height));
+        if (randomColor) 
+        {
+            blockColors.add(generateRandomColor());
+        } 
+        else 
+        {
+            blockColors.add(Color.BLUE); 
+        }
+    }
+
+    // Generate a random color
+    private Color generateRandomColor() 
+    {
+        int r = random.nextInt(256);
+        int g = random.nextInt(256);
+        int b = random.nextInt(256);
+        return new Color(r, g, b); 
+    }
+    
+    private void initializeGame()
+    {
+        Blocks();
     }
     
     

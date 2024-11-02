@@ -66,7 +66,7 @@ public class Breakout extends JFrame
         }
     }
     
-    
+    //Does the painting, which starts the music
     public Breakout() 
     {
         this.setTitle("Breakout");
@@ -83,6 +83,14 @@ public class Breakout extends JFrame
         musicPlayer.play("Breakout.wav");
 
         initializeGame();
+    }
+    
+    // Initialize the game for start
+    private void initializeGame() 
+    {
+        Blocks();
+        gameOver = false;
+        ballMoving = false;
     }
     private void Blocks()
     {

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import javax.sound.sampled.*;
 
-public class Breakout extends JFrame 
+public class Breakout extends JFrame implements KeyListener
 {
     private boolean gameWon = false;
     private boolean gameOver; 
@@ -34,6 +34,11 @@ public class Breakout extends JFrame
     private JLabel scoreLabel;
     private Timer countdownTimer;
     private MusicPlayer musicPlayer;
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
     
     //Learned from https://www.youtube.com/watch?v=kc3McnaAU8s
     public class MusicPlayer 
@@ -83,6 +88,20 @@ public class Breakout extends JFrame
         musicPlayer.play("Breakout.wav");
 
         initializeGame();
+                Timer timer = new Timer(20, e -> 
+        {
+            if (!gameOver) 
+            {
+                paddle.update();
+                if (ballMoving) 
+                {
+                    ball.update();
+                }
+                checkCollisions();
+                repaint();
+            }
+        });
+        timer.start();
         
         
     }
@@ -96,6 +115,34 @@ public class Breakout extends JFrame
         ball = new Ball(335, 380, 15, Color.WHITE);
         gameOver = false;
         ballMoving = false;
+    }
+    private void startCountdown() 
+    {
+        countdownTimer = new Timer(1000, e -> 
+        {
+            if (!gameOver) 
+            {
+                if (timeRemaining > 0) 
+                {
+                    timeRemaining--;
+                    int minutes = timeRemaining / 60;
+                    int seconds = timeRemaining % 60;
+                    timerLabel.setText(String.format("Time: %d:%02d", minutes, seconds));
+                } 
+                else 
+                {
+                    gameOver = true;
+                    timerLabel.setText("Time's Up!");
+                    countdownTimer.stop();
+                    repaint();
+                }
+            } 
+            else 
+            {
+                countdownTimer.stop(); 
+            }
+        });
+        countdownTimer.start();
     }
     
     //sends the dimensions to createblock
@@ -133,7 +180,50 @@ public class Breakout extends JFrame
         int g = random.nextInt(256);
         int b = random.nextInt(256);
         return new Color(r, g, b); 
-    }   
+    }  
+    
+    // KeyListener methods
+    public void keyTyped(KeyEvent e) 
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void keyPressed(KeyEvent e) 
+    {
+        if (!countdownStarted) 
+        {
+            startCountdown(); 
+            countdownStarted = true; 
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) 
+        {
+            paddle.moveLeft();
+            if (!ballMoving) 
+            {
+                setRandomBallDirection(); 
+            }
+            ballMoving = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) 
+        {
+            paddle.moveRight();
+            if (!ballMoving) 
+            {
+                setRandomBallDirection(); 
+            }
+            ballMoving = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_UP) 
+        {
+            ballMoving = true;
+            if (!ballMoving) 
+            {
+                setRandomBallDirection(); 
+            }
+            ballMoving = true;
+        }
+    }
     
     //paint the top, using what was taught in Pset5
     private void Words()
@@ -215,6 +305,11 @@ public class Breakout extends JFrame
             this.color = color;
             this.dx = 0;
         }
+        
+        public void moveLeft() { dx = -10; }
+        public void moveRight() { dx = 10; }
+        public void stop() { dx = 0; }
+
         public void draw(Graphics g) 
         {
             g.setColor(color);
@@ -320,6 +415,16 @@ public class Breakout extends JFrame
             musicPlayer.stop();
             countdownTimer.stop();
         }
+    }
+    // Set a random direction for the ball
+    private void setRandomBallDirection() 
+    {
+        ball.dx = 4; 
+        if (random.nextBoolean()) 
+        { 
+            ball.dx = -ball.dx; 
+        }
+        ball.dy =  6; 
     }
     public static void main(String[] args) 
     {

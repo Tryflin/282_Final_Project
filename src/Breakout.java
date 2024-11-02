@@ -105,6 +105,9 @@ public class Breakout extends JFrame
             CreateBlock(i * 55 + 5, 75, 50, 20, false);
             CreateBlock(i * 55 + 5, 100, 50, 20, false); 
         }
+        
+        BlockPanel blockPanel = new BlockPanel();
+        this.add(blockPanel, BorderLayout.CENTER);
     }
     
     //actually making the blocks
@@ -184,6 +187,29 @@ public class Breakout extends JFrame
             this.height = height;
             this.color = color;
             this.dx = 0;
+        }
+        public void draw(Graphics g) 
+        {
+            g.setColor(color);
+            g.fillRect(x, y, width, height);
+        }
+    }
+    private class BlockPanel extends JPanel 
+    {
+        @Override
+        protected void paintComponent(Graphics g) 
+        {
+            super.paintComponent(g);
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
+            for (int i = 0; i < blocks.size(); i++) 
+            {
+                Rectangle block = blocks.get(i);
+                g.setColor(blockColors.get(i));
+                g.fillRect(block.x, block.y, block.width, block.height);
+            }
+            paddle.draw(g);
+            ball.draw(g); 
         }
     }
     public static void main(String[] args) 

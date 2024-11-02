@@ -90,6 +90,8 @@ public class Breakout extends JFrame
     {
         Blocks();
         Words();
+        paddle = new Paddle(300, 400, 85, 15, Color.GRAY);
+        ball = new Ball(335, 380, 15, Color.WHITE);
         gameOver = false;
         ballMoving = false;
     }

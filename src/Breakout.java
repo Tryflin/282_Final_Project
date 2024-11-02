@@ -83,6 +83,8 @@ public class Breakout extends JFrame
         musicPlayer.play("Breakout.wav");
 
         initializeGame();
+        
+        
     }
     
     // Initialize the game for start
@@ -171,6 +173,31 @@ public class Breakout extends JFrame
             g.setColor(color);
             g.fillOval(x, y, diameter, diameter);
         }
+        public void update() 
+        {
+            x += dx;
+            y += dy;
+
+            if (x < 0 || x + diameter > win_wid) 
+            {
+                dx = -dx;
+            }
+            if (y < 0) 
+            {
+                dy = -dy;
+            }
+            if (y + diameter > bottom) 
+            {
+                gameOver = true; 
+                musicPlayer.stop();
+                countdownTimer.stop(); 
+            }
+        }
+
+        public void setDx(int dx) 
+        {
+            this.dx = dx; 
+        }
     }
     
     class Paddle
@@ -193,6 +220,12 @@ public class Breakout extends JFrame
             g.setColor(color);
             g.fillRect(x, y, width, height);
         }
+        public void update() 
+        {
+            x += dx;
+            if (x < 0) x = 0;
+            if (x + width > win_wid) x = win_wid - width; 
+        }  
     }
     private class BlockPanel extends JPanel 
     {
@@ -210,6 +243,82 @@ public class Breakout extends JFrame
             }
             paddle.draw(g);
             ball.draw(g); 
+        }
+    }
+    public void draw(Graphics g)      
+    {
+        g.setColor(color);
+        g.fillOval(x, y, diameter, diameter);
+    }
+
+    public void update() 
+    {
+        x += dx;
+        y += dy;
+
+        if (x < 0 || x + diameter > win_wid) 
+        {
+            dx = -dx;
+        }
+        if (y < 0) 
+        {
+            dy = -dy;
+        }
+        if (y + diameter > bottom) 
+        {
+            gameOver = true; 
+            musicPlayer.stop();
+            countdownTimer.stop(); 
+        }
+    }
+
+    public void setDx(int dx) 
+    {
+        this.dx = dx; 
+    }
+    // Check for collisions
+    private void checkCollisions() 
+    {
+        if (ball.y + ball.diameter >= paddle.y && 
+            ball.y + ball.diameter <= paddle.y + paddle.height &&
+            ball.x + ball.diameter >= paddle.x && 
+            ball.x <= paddle.x + paddle.width) 
+        {
+            ball.dy = -ball.dy; 
+            ball.y = paddle.y - ball.diameter;
+            ball.setDx(paddle.dx);
+        }
+
+        for (int i = 0; i < blocks.size(); i++) 
+        {
+            Rectangle block = blocks.get(i);
+            if (block.intersects(new Rectangle(ball.x, ball.y, 
+                ball.diameter, ball.diameter))) 
+            {
+                if (ball.x + ball.diameter <= block.x || ball.x >= 
+                    block.x + block.width) 
+                {
+                    ball.dx = -ball.dx; 
+                } 
+                else
+                {
+                    ball.dy = -ball.dy; 
+                }
+                blocks.remove(i);
+                blockColors.remove(i);
+
+                score += 10; 
+                scoreLabel.setText("Score: " + score);
+                break;
+            }
+        }
+
+        if (blocks.isEmpty()) 
+        {
+            gameOver = true;
+            gameWon = true;
+            musicPlayer.stop();
+            countdownTimer.stop();
         }
     }
     public static void main(String[] args) 

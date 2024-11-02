@@ -23,6 +23,37 @@ public class Breakout extends JFrame
     private ArrayList<Rectangle> blocks; 
     private ArrayList<Color> blockColors; 
     
+    //Learned from https://www.youtube.com/watch?v=kc3McnaAU8s
+    public class MusicPlayer 
+    {
+        private Clip clip;
+
+        public void play(String filepath) 
+        {
+            try 
+            {
+                AudioInputStream audioInputStream = 
+                AudioSystem.getAudioInputStream(new File(filepath));
+                clip = AudioSystem.getClip();
+                clip.open(audioInputStream);
+                clip.loop(Clip.LOOP_CONTINUOUSLY); 
+                clip.start();
+            } 
+            catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) 
+            {
+                e.printStackTrace();
+            }
+        }
+
+        public void stop() 
+        {
+            if (clip != null && clip.isRunning()) 
+            {
+                clip.stop();
+            }
+        }
+    }
+    
     public Breakout() 
     {
         this.setTitle("Breakout");

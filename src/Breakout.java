@@ -36,9 +36,14 @@ public class Breakout extends JFrame implements KeyListener
     private MusicPlayer musicPlayer;
 
     @Override
-    public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); 
+    public void keyReleased(KeyEvent e) 
+    {
+        if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) 
+        {
+            paddle.stop();
+        }
     }
+
     
     //Learned from https://www.youtube.com/watch?v=kc3McnaAU8s
     public class MusicPlayer 
@@ -77,12 +82,12 @@ public class Breakout extends JFrame implements KeyListener
         this.setTitle("Breakout");
         this.setSize(win_wid, win_hei);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.addKeyListener(this);
+
 
         blocks = new ArrayList<>();
         blockColors = new ArrayList<>();
         random = new Random();
-        
-        this.setVisible(true);
         
         musicPlayer = new MusicPlayer();
         musicPlayer.play("Breakout.wav");
@@ -103,7 +108,7 @@ public class Breakout extends JFrame implements KeyListener
         });
         timer.start();
         
-        
+        this.setVisible(true);                
     }
     
     // Initialize the game for start
@@ -182,7 +187,7 @@ public class Breakout extends JFrame implements KeyListener
         return new Color(r, g, b); 
     }  
     
-    // KeyListener methods
+    // KeyListener methods learned from: https://docs.oracle.com/javase/tutorial/uiswing/events/keylistener.html
     public void keyTyped(KeyEvent e) 
     {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -235,13 +240,14 @@ public class Breakout extends JFrame implements KeyListener
         
         JPanel northPan = new JPanel();         
         northPan.add(lab);
-        //timerLabel = new JLabel("Time: 3:00"); 
-        //northPan.add(timerLabel); 
-        //scoreLabel = new JLabel("Score: 0"); 
-        //northPan.add(scoreLabel);
+        timerLabel = new JLabel("Time: 3:00"); 
+        northPan.add(timerLabel); 
+        scoreLabel = new JLabel("Score: 0"); 
+        northPan.add(scoreLabel);
         this.add(northPan, BorderLayout.NORTH);
     }
     
+    //creates a white ball that updates.
     class Ball
     {
         private int x, y, diameter;
@@ -290,6 +296,7 @@ public class Breakout extends JFrame implements KeyListener
         }
     }
     
+    //The paddle to hit the ball, with an updater
     class Paddle
     {
         private int x, y, width, height;
@@ -322,6 +329,8 @@ public class Breakout extends JFrame implements KeyListener
             if (x + width > win_wid) x = win_wid - width; 
         }  
     }
+    
+    //this is what sets the x and y stuff
     private class BlockPanel extends JPanel 
     {
         @Override

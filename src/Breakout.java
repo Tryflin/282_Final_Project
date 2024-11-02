@@ -170,7 +170,19 @@ public class Breakout extends JFrame
     
     class Paddle
     {
-        
+        private int x, y, width, height;
+        private Color color;
+        private int dx;
+
+        public Paddle(int x, int y, int width, int height, Color color) 
+        {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.color = color;
+            this.dx = 0;
+        }
     }
     public static void main(String[] args) 
     {

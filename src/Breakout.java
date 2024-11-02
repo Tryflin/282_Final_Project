@@ -79,6 +79,9 @@ public class Breakout extends JFrame
         
         this.setVisible(true);
         
+        musicPlayer = new MusicPlayer();
+        musicPlayer.play("Breakout.wav");
+
         initializeGame();
     }
     private void Blocks()

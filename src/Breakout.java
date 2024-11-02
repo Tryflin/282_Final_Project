@@ -16,13 +16,24 @@ import javax.sound.sampled.*;
 
 public class Breakout extends JFrame 
 {
+    private boolean gameWon = false;
+    private boolean gameOver; 
+    private boolean ballMoving;
     private int win_wid = 670;
     private int win_hei = 500;
-    private Ball ball;
-    private Paddle paddle;
-    private Random random;
+    private int bottom = 450;
+    private int score = 0;
+    private int timeRemaining = 180;
+    private boolean countdownStarted = false; 
     private ArrayList<Rectangle> blocks; 
     private ArrayList<Color> blockColors; 
+    private Random random; 
+    private Paddle paddle;
+    private Ball ball; 
+    private JLabel timerLabel; 
+    private JLabel scoreLabel;
+    private Timer countdownTimer;
+    private MusicPlayer musicPlayer;
     
     //Learned from https://www.youtube.com/watch?v=kc3McnaAU8s
     public class MusicPlayer 

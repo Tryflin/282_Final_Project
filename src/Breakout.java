@@ -54,6 +54,7 @@ public class Breakout extends JFrame
         }
     }
     
+    
     public Breakout() 
     {
         this.setTitle("Breakout");

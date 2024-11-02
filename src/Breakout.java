@@ -12,8 +12,17 @@
         https://docs.oracle.com/javase/tutorial/uiswing/events/keylistener.html
     Timer learned from: 
         https://stackoverflow.com/questions/10032003/how-to-make-a-countdown-timer-in-android
+    Music is trimmed from: https://www.youtube.com/watch?v=fYx1inFOUVY using VLC
     Everything else was an accumulation of 281 and 282
  */
+
+/*
+    To do list:
+    Add a better background other than just black
+    make the ball and paddle more detailed
+    make an easy and hard difficulty that changes the amount of bricks made and the timer
+    Maybe try and see if there is a better way to ask if they want to try again, instead of a JOptionPane
+*/
 
 //all the import statements
 import java.awt.*;

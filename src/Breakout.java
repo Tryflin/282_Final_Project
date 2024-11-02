@@ -3,6 +3,17 @@
     10/27/2024
     Program is designed to simuate a game of Breakout
  */
+/*
+    Credit:
+    Music learned from https://www.youtube.com/watch?v=kc3McnaAU8s
+    Most of the JFrame and how to set it up was learned from PSET5
+    Blocks, Paddle, and ball were learned from PSET5
+    KeyListener learned from: 
+        https://docs.oracle.com/javase/tutorial/uiswing/events/keylistener.html
+    Timer learned from: 
+        https://stackoverflow.com/questions/10032003/how-to-make-a-countdown-timer-in-android
+    Everything else was an accumulation of 281 and 282
+ */
 
 //all the import statements
 import java.awt.*;
@@ -37,7 +48,7 @@ public class Breakout extends JFrame implements KeyListener
     private Timer countdownTimer;
     private MusicPlayer musicPlayer;
 
-    // Plays music, learned from https://www.youtube.com/watch?v=kc3McnaAU8s
+    // Plays music
     public class MusicPlayer 
     {
         private Clip clip;
@@ -198,7 +209,7 @@ public class Breakout extends JFrame implements KeyListener
         return new Color(r, g, b); 
     }
 
-    // KeyListener methods learned from: https://docs.oracle.com/javase/tutorial/uiswing/events/keylistener.html
+    // KeyListener methods 
     @Override
     public void keyTyped(KeyEvent e) 
     {

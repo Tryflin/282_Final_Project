@@ -340,12 +340,15 @@ public class Breakout extends JFrame implements KeyListener
             ball.draw(g); 
         }
     }
+    
+    //sets on the awt screen
     public void draw(Graphics g)      
     {
         g.setColor(color);
         g.fillOval(x, y, diameter, diameter);
     }
 
+    //refresh screen NOT WORKING
     public void update() 
     {
         x += dx;

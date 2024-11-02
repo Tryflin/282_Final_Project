@@ -61,7 +61,9 @@ public class Breakout extends JFrame
         this.setSize(win_wid, win_hei);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        
+        blocks = new ArrayList<>();
+        blockColors = new ArrayList<>();
+        random = new Random();
         
         this.setVisible(true);
     }
@@ -86,3 +88,4 @@ public class Breakout extends JFrame
         Breakout test = new Breakout();
     }
 }
+

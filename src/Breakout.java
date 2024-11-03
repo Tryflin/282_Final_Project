@@ -350,7 +350,10 @@ public class Breakout extends JFrame implements KeyListener
                 g.drawString(String.format("Time: %d:%02d", minutes, seconds),
                     win_wid / 2 - 70, win_hei / 2 + 60);
 
-                showTryAgainDialog(); 
+                //fix for try again
+                Timer dialogTimer = new Timer(500, event -> showTryAgainDialog());
+                dialogTimer.setRepeats(false);
+                dialogTimer.start();
             }
         }
     }

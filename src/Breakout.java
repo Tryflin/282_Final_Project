@@ -22,7 +22,6 @@
     make the ball and paddle more detailed
     make an easy and hard difficulty that changes the amount of bricks made and the timer
     Maybe try and see if there is a better way to ask if they want to try again, instead of a JOptionPane
-    New error to fix: when restarting twice, it causes it to freakou, and give the try again  twice
 */
 
 //all the import statements
@@ -57,7 +56,10 @@ public class Breakout extends JFrame implements KeyListener
     private JLabel scoreLabel;
     private Timer countdownTimer;
     private MusicPlayer musicPlayer;
-
+    //fix? for the second try again
+    private Timer dialogTimer;
+    
+    
     // Plays music
     public class MusicPlayer 
     {
@@ -270,22 +272,32 @@ public class Breakout extends JFrame implements KeyListener
         paddle.stop(); 
     }
 
+    //updated for fix, added a reset for timer/stopping the timerr from being triggered twice
     // Show dialog for game over or win
     private void showTryAgainDialog() 
     {
-        int response = JOptionPane.showOptionDialog(this, gameWon ? 
-            "You Win! Try Again?" : "Game Over! Try Again?",
-            "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-            null, new String[]{"Yes", "No"}, "Yes");
-
-        if (response == JOptionPane.YES_OPTION) 
+        if (dialogTimer != null && dialogTimer.isRunning()) 
         {
-            restartGame();
-        } 
-        else 
-        {
-            System.exit(0); 
+            dialogTimer.stop(); 
         }
+        dialogTimer = new Timer(500, event -> 
+        {
+            int response = JOptionPane.showOptionDialog(this, gameWon ? 
+                "You Win! Try Again?" : "Game Over! Try Again?",
+                "Game Over", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                null, new String[]{"Yes", "No"}, "Yes");
+
+            if (response == JOptionPane.YES_OPTION) 
+            {
+                restartGame();
+            } 
+            else 
+            {
+                System.exit(0); 
+            }
+        });
+        dialogTimer.setRepeats(false);
+        dialogTimer.start();
     }
 
     // Restart the game, paddle is not done correctly

@@ -22,6 +22,7 @@
     make the ball and paddle more detailed
     make an easy and hard difficulty that changes the amount of bricks made and the timer
     Maybe try and see if there is a better way to ask if they want to try again, instead of a JOptionPane
+    New error to fix: when restarting twice, it causes it to freakou, and give the try again  twice
 */
 
 //all the import statements

@@ -14,12 +14,12 @@
         https://stackoverflow.com/questions/10032003/how-to-make-a-countdown-timer-in-android
     Music is trimmed from: https://www.youtube.com/watch?v=fYx1inFOUVY using VLC
     Everything else was an accumulation of 281 and 282
+    Powerups where learned from just a google search, and some help from https://github.com/sibnerian/Breakout/blob/master/src/PowerUp.java
  */
 
 /*
     To do list:
-    Add a better background other than just black
-    make the ball and paddle more detailed
+    make the ball and paddle more detailed uhh probably not
     make an easy and hard difficulty that changes the amount of bricks made and the timer
     Maybe try and see if there is a better way to ask if they want to try again, instead of a JOptionPane
 */
@@ -163,6 +163,11 @@ public class Breakout extends JFrame implements KeyListener
             case "ExtraLife":
                 timeRemaining += 30; 
                 break;
+                
+            // Double the paddle speed
+            case "FastPaddle":
+            paddle.setSpeedMultiplier(2); 
+            break;
         }
     }
 
@@ -407,6 +412,7 @@ public class Breakout extends JFrame implements KeyListener
         paddle.x = (win_wid - 85) / 2; 
         paddle.width = 85;            
         paddle.stop(); 
+        paddle.resetSpeed();
 
         // Clear any active power-ups
         powerUps.clear();
@@ -527,6 +533,7 @@ public class Breakout extends JFrame implements KeyListener
         private int x, y, width, height;
         private Color color;
         private int dx;
+        private double speedMultiplier = 1.0; 
 
         public Paddle(int x, int y, int width, int height, Color color) 
         {
@@ -538,22 +545,33 @@ public class Breakout extends JFrame implements KeyListener
             this.dx = 0;
         }
 
+        // Methods to move the paddle
         public void moveLeft() { dx = -10; }
         public void moveRight() { dx = 10; }
         public void stop() { dx = 0; }
 
+        public void setSpeedMultiplier(double multiplier) 
+        {
+            this.speedMultiplier = multiplier;
+        }
+        
+        public void update() 
+        {
+            x += dx * speedMultiplier;  
+            if (x < 0) x = 0;
+            if (x + width > win_wid) x = win_wid - width; 
+        }
+
+        public void resetSpeed() 
+        {
+            this.speedMultiplier = 1.0; 
+        }
+        
         public void draw(Graphics g) 
         {
             g.setColor(color);
             g.fillRect(x, y, width, height);
         }
-
-        public void update() 
-        {
-            x += dx;
-            if (x < 0) x = 0;
-            if (x + width > win_wid) x = win_wid - width; 
-        }        
     }
 
     // Check for collisions
@@ -589,10 +607,12 @@ public class Breakout extends JFrame implements KeyListener
                 
                 if (random.nextInt(100) < 20) 
                 {
-                    String[] types = {"ExpandPaddle", "ExtraLife"};
+                    String[] types = {"ExpandPaddle", "ExtraLife", "FastPaddle"};
                     String type = types[random.nextInt(types.length)];
-                    Color color = type.equals("ExpandPaddle") ? Color.GREEN :
-                                  type.equals("ExtraLife") ? Color.YELLOW : Color.RED;
+                    Color color = type.equals("FastPaddle") ? Color.RED :
+                                type.equals("ExpandPaddle") ? Color.GREEN :
+                                type.equals("ExtraLife") ? Color.YELLOW : 
+                            Color.RED;
                     powerUps.add(new PowerUp(block.x, block.y, 20, type, color));
                 }
                 

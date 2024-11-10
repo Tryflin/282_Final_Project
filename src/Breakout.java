@@ -169,6 +169,20 @@ public class Breakout extends JFrame implements KeyListener
             paddle.setSpeedMultiplier(2); 
             break;
         }
+        Timer timer = new Timer(20000, e ->
+        {
+            switch (powerUp.getType()) 
+            {
+                case "ExpandPaddle":
+                    paddle.width -= 30; 
+                    break;
+                case "FastPaddle":
+                    paddle.setSpeedMultiplier(1); 
+                    break;
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     // Initialize game elements
@@ -266,14 +280,15 @@ public class Breakout extends JFrame implements KeyListener
         return new Color(r, g, b); 
     }
     
-    //This is what defines the powerup, or what it looks like. I made it take the
-    //same demsions as the ball, but made it only go down
+    //This is what defines the powerup, or what it looks like. 
     class PowerUp 
     {
         private int x, y, size;
         private String type; 
         private Color color;
         private int dy = 2; 
+        private long startTime; 
+        private final long duration = 20000; 
 
         public PowerUp(int x, int y, int size, String type, Color color) 
         {
@@ -282,6 +297,7 @@ public class Breakout extends JFrame implements KeyListener
             this.size = size;
             this.type = type;
             this.color = color;
+            this.startTime = System.currentTimeMillis();
         }
 
         public void draw(Graphics g) 
@@ -293,6 +309,10 @@ public class Breakout extends JFrame implements KeyListener
         public void update()
         {
             y += dy; 
+            if (System.currentTimeMillis() - startTime > duration) 
+            {             
+                powerUps.remove(this); 
+            }
         }
 
         public boolean isCaught(Paddle paddle) 
@@ -306,7 +326,6 @@ public class Breakout extends JFrame implements KeyListener
             return type;
         }
     }
-
 
     // KeyListener methods 
     @Override

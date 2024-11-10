@@ -58,6 +58,7 @@ public class Breakout extends JFrame implements KeyListener
     private MusicPlayer musicPlayer;
     //fix? for the second try again
     private Timer dialogTimer;
+    private ArrayList<PowerUp> powerUps;
     
     
     // Plays music
@@ -108,22 +109,61 @@ public class Breakout extends JFrame implements KeyListener
 
         musicPlayer = new MusicPlayer();
         musicPlayer.play("Breakout.wav");
+        
+        powerUps = new ArrayList<>();
 
         //This is the checker for updates, A.K.A it checks every couple millaseconds
         Timer timer = new Timer(20, e -> 
         {
-            if (!gameOver) 
-            {
+            if (!gameOver) {
                 paddle.update();
-                if (ballMoving) 
-                {
+                if (ballMoving) {
                     ball.update();
                 }
                 checkCollisions();
+
+                //This is the collison checker for powerups, If it hits the paddles deminsions
+                //It will appy the powerup, if it hits the bottom of the window, it despawns
+                for (int i = 0; i < powerUps.size(); i++) 
+                {
+                    PowerUp p = powerUps.get(i);
+                    p.update();
+
+                    if (p.isCaught(paddle)) 
+                    {
+                        applyPowerUp(p);
+                        powerUps.remove(i);
+                        i--;
+                    } 
+                    else if (p.y > win_hei) 
+                    { 
+                        powerUps.remove(i);
+                        i--;
+                    }
+                }
+
                 repaint();
             }
         });
         timer.start();
+    }
+
+    private void applyPowerUp(PowerUp powerUp) 
+    {
+        //switch instead of if statement in case i add more
+        switch (powerUp.getType()) 
+        {
+            // Increase paddle width
+            case "ExpandPaddle":
+                paddle.width += 30; 
+                break;
+                
+                
+            // Add extra time, may change for lives if added
+            case "ExtraLife":
+                timeRemaining += 30; 
+                break;
+        }
     }
 
     // Initialize game elements
@@ -220,6 +260,48 @@ public class Breakout extends JFrame implements KeyListener
         int b = random.nextInt(256);
         return new Color(r, g, b); 
     }
+    
+    //This is what defines the powerup, or what it looks like. I made it take the
+    //same demsions as the ball, but made it only go down
+    class PowerUp 
+    {
+        private int x, y, size;
+        private String type; 
+        private Color color;
+        private int dy = 2; 
+
+        public PowerUp(int x, int y, int size, String type, Color color) 
+        {
+            this.x = x;
+            this.y = y;
+            this.size = size;
+            this.type = type;
+            this.color = color;
+        }
+
+        public void draw(Graphics g) 
+        {
+            g.setColor(color);
+            g.fillOval(x, y, size, size);
+        }
+
+        public void update()
+        {
+            y += dy; 
+        }
+
+        public boolean isCaught(Paddle paddle) 
+        {
+            return (x + size > paddle.x && x < paddle.x + paddle.width && 
+                    y + size > paddle.y && y < paddle.y + paddle.height);
+        }
+
+        public String getType() 
+        {
+            return type;
+        }
+    }
+
 
     // KeyListener methods 
     @Override
@@ -300,7 +382,7 @@ public class Breakout extends JFrame implements KeyListener
         dialogTimer.start();
     }
 
-    // Restart the game, paddle is not done correctly
+    // Restart the game
     private void restartGame() 
     {
         gameOver = false;
@@ -309,18 +391,27 @@ public class Breakout extends JFrame implements KeyListener
         score = 0;
         scoreLabel.setText("Score: 0");
         timerLabel.setText("Time: 3:00");
-        countdownStarted = false; 
+        countdownStarted = false;
 
         blocks.clear();
         blockColors.clear();
         Blocks(); 
+
+        // Reset the ball position and state
         ball.x = 335;
         ball.y = 380;
         setRandomBallDirection();
-        paddle.x = (win_wid - paddle.width) / 2;
         ballMoving = false;
+
+        // Reset paddle position and width
+        paddle.x = (win_wid - 85) / 2; 
+        paddle.width = 85;            
         paddle.stop(); 
-        
+
+        // Clear any active power-ups
+        powerUps.clear();
+
+        // Restart the music
         musicPlayer.play("Breakout.wav");
 
         repaint();
@@ -343,6 +434,15 @@ public class Breakout extends JFrame implements KeyListener
             }
             paddle.draw(g);
             ball.draw(g);
+
+            if (powerUps == null) 
+            {
+                powerUps = new ArrayList<>();
+            }
+            for (PowerUp p : powerUps) 
+            {
+                p.draw(g);
+            }
 
             if (gameOver) 
             {
@@ -371,7 +471,7 @@ public class Breakout extends JFrame implements KeyListener
         }
     }
 
-    // Makes the white ball
+    // takes the given deminsions, as well as its speed and color
     class Ball 
     {
         private int x, y, diameter;
@@ -486,7 +586,16 @@ public class Breakout extends JFrame implements KeyListener
                 }
                 blocks.remove(i);
                 blockColors.remove(i);
-
+                
+                if (random.nextInt(100) < 20) 
+                {
+                    String[] types = {"ExpandPaddle", "ExtraLife"};
+                    String type = types[random.nextInt(types.length)];
+                    Color color = type.equals("ExpandPaddle") ? Color.GREEN :
+                                  type.equals("ExtraLife") ? Color.YELLOW : Color.RED;
+                    powerUps.add(new PowerUp(block.x, block.y, 20, type, color));
+                }
+                
                 score += 10; 
                 scoreLabel.setText("Score: " + score);
                 break;

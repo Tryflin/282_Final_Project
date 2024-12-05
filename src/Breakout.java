@@ -3,26 +3,6 @@
     10/27/2024
     Program is designed to simuate a game of Breakout
  */
-/*
-    Credit:
-    Music learned from https://www.youtube.com/watch?v=kc3McnaAU8s
-    Most of the JFrame and how to set it up was learned from PSET5
-    Blocks, Paddle, and ball were learned from PSET5
-    KeyListener learned from: 
-        https://docs.oracle.com/javase/tutorial/uiswing/events/keylistener.html
-    Timer learned from: 
-        https://stackoverflow.com/questions/10032003/how-to-make-a-countdown-timer-in-android
-    Music is trimmed from: https://www.youtube.com/watch?v=fYx1inFOUVY using VLC
-    Everything else was an accumulation of 281 and 282
-    Powerups where learned from just a google search, and some help from https://github.com/sibnerian/Breakout/blob/master/src/PowerUp.java
- */
-
-/*
-    To do list:
-    make the ball and paddle more detailed uhh probably not
-    make an easy and hard difficulty that changes the amount of bricks made and the timer
-    Maybe try and see if there is a better way to ask if they want to try again, instead of a JOptionPane
-*/
 
 //all the import statements
 import java.awt.*;
@@ -62,6 +42,8 @@ public class Breakout extends JFrame implements KeyListener
     
     
     // Plays music
+    //Credit: Music learned from https://www.youtube.com/watch?v=kc3McnaAU8s
+    //Music is trimmed from: https://www.youtube.com/watch?v=fYx1inFOUVY using VLC
     public class MusicPlayer 
     {
         private Clip clip;
@@ -113,6 +95,8 @@ public class Breakout extends JFrame implements KeyListener
         powerUps = new ArrayList<>();
 
         //This is the checker for updates, A.K.A it checks every couple millaseconds
+        //Timer learned from: 
+        //https://stackoverflow.com/questions/10032003/how-to-make-a-countdown-timer-in-android
         Timer timer = new Timer(20, e -> 
         {
             if (!gameOver) {
@@ -148,6 +132,8 @@ public class Breakout extends JFrame implements KeyListener
         timer.start();
     }
 
+    //Powerups where learned from just a google search, 
+    //and some help from https://github.com/sibnerian/Breakout/blob/master/src/PowerUp.java
     private void applyPowerUp(PowerUp powerUp) 
     {
         //switch instead of if statement in case i add more
@@ -328,6 +314,8 @@ public class Breakout extends JFrame implements KeyListener
     }
 
     // KeyListener methods 
+    //KeyListener learned from: 
+    //    https://docs.oracle.com/javase/tutorial/uiswing/events/keylistener.html
     @Override
     public void keyTyped(KeyEvent e) 
     {
@@ -443,6 +431,7 @@ public class Breakout extends JFrame implements KeyListener
     }
 
     // paints, or adds to the screen
+    //Most of the JFrame and how to set it up was learned from PSET5
     private class BlockPanel extends JPanel 
     {
         @Override

@@ -36,7 +36,6 @@ public class Breakout extends JFrame implements KeyListener
     private JLabel scoreLabel;
     private Timer countdownTimer;
     private MusicPlayer musicPlayer;
-    //fix? for the second try again
     private Timer dialogTimer;
     private ArrayList<PowerUp> powerUps;
     
@@ -653,6 +652,6 @@ public class Breakout extends JFrame implements KeyListener
     // Main method to start the game
     public static void main(String[] args) 
     {
-        Breakout test = new Breakout();
+        Breakout Final = new Breakout();
     }
 }
